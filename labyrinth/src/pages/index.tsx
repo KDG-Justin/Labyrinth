@@ -1,9 +1,7 @@
-import App from "@/App";
-import '../styles/globals.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "@/styles/globals.css";
+import { StartScreen } from '@/components/StartScreen';
 
-
-const Main = () => {
-    return <App />;
-  };
-  
-  export default Main;
+export default function Game(){
+  return (<StartScreen/>)
+}
