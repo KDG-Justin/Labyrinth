@@ -1,0 +1,12 @@
+:root {
+    background: black
+}
+
+@font-face {
+    font-family: 'pixel';
+    src: url('assets/fonts/Pixeled.ttf') format('truetype'); 
+  }
+
+  body, h1, h2, h3, h4, p, button {
+    font-family: 'pixel', sans-serif;
+  }

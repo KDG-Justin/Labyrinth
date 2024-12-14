@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { Link } from "react-router-dom";
+
 
 
 export default function StartScreen(){
@@ -7,7 +8,7 @@ export default function StartScreen(){
   <div className="row justify-content-center" style={{minHeight: '100vh'}}>
     <div className="col d-flex justify-content-center align-items-center">
       <div className="d-flex flex-column">
-        <Link href={'/play'} style={{textDecoration: 'none'}}>
+        <Link to={'/play'} style={{textDecoration: 'none'}}>
         <h4 className="mt-4 mb-4" style={{color: 'white'}}
         onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.1)'; // Vergroot de tekst bij hover
@@ -21,7 +22,7 @@ export default function StartScreen(){
         <h4 className="mt-4 mb-4 p2">Settings</h4>
 
 
-        <Link href={'/not'} style={{textDecoration: 'none'}}>
+        <Link to={'/not'} style={{textDecoration: 'none'}}>
         <h4 className="mt-4 mb-4" style={{color: 'white'}}
         onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.1)';
