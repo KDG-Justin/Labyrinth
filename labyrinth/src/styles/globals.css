@@ -1,15 +1,16 @@
+:root{
+  background-color: black;
+}
 @font-face {
   font-family: 'pixel';
   src: url('/fonts/Pixeled.ttf') format('truetype'); 
 }
 
-body, h1, h2, h3, p, button {
+body, h1, h2, h3, h4, p, button {
   font-family: 'pixel', sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
   font-family: 'pixel', sans-serif; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

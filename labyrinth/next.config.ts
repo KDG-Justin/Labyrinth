@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["www.google.com", ""], 
   },
+  env: {
+    BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  },
 };
 
 export default nextConfig;
