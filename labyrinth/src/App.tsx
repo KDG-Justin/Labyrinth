@@ -6,6 +6,7 @@ import DoNotClickScreen from './components/DoNotClickScreen'
 import { PlayScreen } from './components/PlayScreen'
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { GameScreen } from './components/GameScreen'
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL
 const queryClient = new QueryClient()
@@ -21,6 +22,7 @@ function App() {
                             <Route path="/" element={<StartScreen />} />
                             <Route path="/not" element={<DoNotClickScreen />} />
                             <Route path="/play" element={<PlayScreen />} />
+                            <Route path="/play/easy" element={<GameScreen />} />
                         </Routes>
                     </BrowserRouter>
             </QueryClientProvider>

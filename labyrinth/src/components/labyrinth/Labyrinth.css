@@ -1,0 +1,35 @@
+.labyrinth {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  
+  .row {
+    display: flex;
+    gap: 2px;
+  }
+  
+  .cell {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .wall {
+    background-color: red;
+  }
+  
+  .empty {
+    background-color: black;
+  }
+  
+  .portal {
+    background-color: white;
+  }
+  
+  .player-location {
+    background-color: green;
+  }
+  
+  .exit {
+    background-color: yellow;
+  }
