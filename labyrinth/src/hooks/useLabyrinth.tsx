@@ -3,10 +3,10 @@ import { Labyrinth } from "../model/Labyrinth";
 import { getLabyrinth } from "../services/LabyrinthService";
 
 
-export function useLabyrinth(){
+export function useLabyrinth(id: string){
     const {data: labyrinth, isError, isLoading} = useQuery<Labyrinth>(
         ["labyrinth"],
-        () => getLabyrinth(),
+        () => getLabyrinth(id),
         {refetchInterval: 100}
     )
 

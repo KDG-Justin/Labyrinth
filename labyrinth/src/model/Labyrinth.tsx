@@ -1,4 +1,5 @@
 
 export interface Labyrinth {
-    easy: string[][]
+    id: string
+    level: string[][],
 }

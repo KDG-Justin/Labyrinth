@@ -15,11 +15,13 @@ export function LeaderboardScreen() {
     </div>
             <div className="row justify-content-center" style={{ maxWidth: '1200px', display: 'flex', marginBottom: '60px', marginTop: '60px'}}>
                     <div className="col" style={{color: 'darkred', fontSize: '36px'}}>Name</div>
+                    <div className="col" style={{color: 'darkred', fontSize: '36px'}}>Level</div>
                     <div className="col"style={{color: 'darkred', fontSize: '36px'}}>Time</div>
                 </div>
-            {players.map(({name, time}, index) => (
+            {players.map(({name, level,time}, index) => (
                 <div className="row justify-content-center" style={{ maxWidth: '1200px', display: 'flex', marginBottom: '30px'}} key={index}>
                     <div className="col">{name}</div>
+                    <div className="col">{level}</div>
                     <div className="col">
                     {String(time.minutes).padStart(2, '0')}:
                     {String(time.seconds).padStart(2, '0')}

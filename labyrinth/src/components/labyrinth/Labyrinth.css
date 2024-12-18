@@ -29,6 +29,10 @@
   .player-location {
     background-color: green;
   }
+
+  .bot {
+    background-color: aqua;
+  }
   
   .exit {
     background-color: yellow;

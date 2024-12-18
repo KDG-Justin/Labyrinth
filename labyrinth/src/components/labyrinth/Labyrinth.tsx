@@ -2,24 +2,25 @@ import { useContext, useEffect, useState } from 'react'
 import './Labyrinth.css'
 import { addPlayer, updateLabyrinth } from '../../services/LabyrinthService'
 import { WinModal } from './WinModal'
-import { getClassName } from '../../util/Utils'
+import { findOtherPortal, getClassName, levels } from '../../util/Utils'
 import NameContext from '../../context/NameContext'
 import { usePlayer } from '../../hooks/usePlayer'
 
 interface LabyrinthProps {
+    id: string
     level: string[][]
 }
 
-export function LabyrinthComponent({ level }: LabyrinthProps) {
-    const {players} = usePlayer();
-    const {name} = useContext(NameContext);
-    const [labyrinth, setLabyrinth] = useState<string[][]>(level);
-    const [endGame, setEndGame] = useState<boolean>();
-    const [seconds, setSeconds] = useState(0);
-    const [minutes, setMinutes] = useState(0);
-    const [isRunning, setIsRunning] = useState(true);
+export function LabyrinthComponent({ id, level }: LabyrinthProps) {
+    const { players } = usePlayer()
+    const { name } = useContext(NameContext)
+    const [labyrinth, setLabyrinth] = useState<string[][]>(level)
+    const [endGame, setEndGame] = useState<boolean>()
+    const [seconds, setSeconds] = useState(0)
+    const [minutes, setMinutes] = useState(0)
+    const [isRunning, setIsRunning] = useState(true)
     const [playerPosition, setPlayerPosition] = useState<[number, number]>(() => {
-        // Zoek de startpositie van de speler
+        // find player position
         for (let row = 0; row < level.length; row++) {
             for (let col = 0; col < level[row].length; col++) {
                 if (level[row][col] === 'PL') {
@@ -28,13 +29,12 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
             }
         }
         return [1, 1] // default player position
-    });
+    })
 
     const resetPlayerToStart = () => {
         const startRow = 1
         const startCol = 1
 
-        // Update het labyrinth om de speler naar de startpositie te verplaatsen
         const resetLabyrinth = labyrinth.map((row, rowIndex) =>
             row.map((cell, colIndex) =>
                 rowIndex === playerPosition[0] && colIndex === playerPosition[1]
@@ -45,19 +45,19 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
             )
         )
 
-        setLabyrinth(resetLabyrinth)
         setPlayerPosition([startRow, startCol])
+        setLabyrinth(resetLabyrinth)
 
         // Update het JSON bestand
-        updateLabyrinth(resetLabyrinth)
+        updateLabyrinth(id!, resetLabyrinth)
     }
 
     const handleEndTimer = () => {
-        addPlayer(minutes.toString(), seconds.toString(), name, players!.length + 1);
-        setMinutes(0);
-        setSeconds(0);
-        setIsRunning(false);
-      };
+        addPlayer(minutes.toString(), seconds.toString(), name, players!.length + 1, id!)
+        setMinutes(0)
+        setSeconds(0)
+        setIsRunning(false)
+    }
 
     const movePlayer = (direction: string) => {
         const [currentRow, currentCol] = playerPosition
@@ -84,18 +84,48 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
             if (labyrinth[newRow][newCol] === 'W') {
                 resetPlayerToStart()
             } else if (labyrinth[newRow][newCol] === 'P') {
+
+                const otherPortal = findOtherPortal(newRow, newCol, labyrinth)
+
+                if (otherPortal) {
+                    const [portalRow, portalCol] = otherPortal
+                    const portalRightCol = portalCol + 1
+
+                    if (portalRightCol < labyrinth[portalRow].length && labyrinth[portalRow][portalRightCol] !== 'W') {
+                        newRow = portalRow;
+                        newCol = portalRightCol
+
+                        const updatedLabyrinth = labyrinth.map((row, rowIndex) =>
+                            row.map((cell, colIndex) =>
+                                rowIndex === currentRow && colIndex === currentCol
+                                    ? cell === 'P'
+                                        ? 'P'
+                                        : 'E' // p stays
+                                    : rowIndex === newRow && colIndex === newCol
+                                      ? 'PL' // new player position
+                                      : cell
+                            )
+                        )
+                        setLabyrinth(updatedLabyrinth)
+                        setPlayerPosition([newRow, newCol])
+                        updateLabyrinth(id!, updatedLabyrinth)
+
+                    } 
+                }
             } else if (labyrinth[newRow][newCol] === 'X') {
-                setEndGame(true);
-                resetPlayerToStart();
-                handleEndTimer();
+                setEndGame(true)
+                resetPlayerToStart()
+                handleEndTimer()
             } else {
                 // update labyrinth array
                 const updatedLabyrinth = labyrinth.map((row, rowIndex) =>
                     row.map((cell, colIndex) =>
                         rowIndex === currentRow && colIndex === currentCol
-                            ? 'E' // old position becomes E
+                            ? cell === 'P'
+                                ? 'P'
+                                : 'E' // p stays
                             : rowIndex === newRow && colIndex === newCol
-                              ? 'PL' // new position becoms PL
+                              ? 'PL' // new player position
                               : cell
                     )
                 )
@@ -105,15 +135,26 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
                 setPlayerPosition([newRow, newCol])
 
                 // Update json
-                updateLabyrinth(updatedLabyrinth)
+                updateLabyrinth(id!, updatedLabyrinth)
             }
         }
     }
+
+    const arrowKeySound = new Audio('/sounds/pluh.mp3')
+
+    useEffect(() => {
+        if (id === '1') {
+            setLabyrinth(levels[1])
+        } else if (id === '2') {
+            setLabyrinth(levels[2])
+        }
+    }, [id])
 
     // listen to key arrows
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             movePlayer(event.key)
+            arrowKeySound.play()
         }
 
         window.addEventListener('keydown', handleKeyDown)
@@ -139,6 +180,19 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
         }
         return () => clearInterval(timer)
     }, [isRunning])
+
+    useEffect(() => {
+        const music = new Audio('/sounds/pixel-song.mp3')
+        music.play()
+
+        music.loop = true
+
+        // clean op function
+        return () => {
+            music.pause()
+            music.currentTime = 0
+        }
+    }, [])
 
     return (
         <div

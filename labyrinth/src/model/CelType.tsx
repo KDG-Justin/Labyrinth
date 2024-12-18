@@ -4,5 +4,6 @@ export enum CelType {
     W = "W",
     E = "E",
     X = "X",
-    PL = "PL"
+    PL = "PL",
+    B = "B"
 }

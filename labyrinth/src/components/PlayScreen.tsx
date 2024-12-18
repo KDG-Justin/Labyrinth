@@ -55,7 +55,7 @@ export function PlayScreen() {
                         <h1 style={{ color: 'white', fontSize: '64px', marginBottom: '100px' }}>Difficulty</h1>
                     </div>
                     <div className="d-flex flex-column">
-                        <Link to={'/play/easy'} style={{ textDecoration: 'none' }}>
+                        <Link to={'/play/1'} style={{ textDecoration: 'none' }}>
                             <h4
                                 className="mt-4 mb-4"
                                 style={{ color: 'darkgreen' }}
@@ -69,6 +69,7 @@ export function PlayScreen() {
                                 Easy
                             </h4>
                         </Link>
+                        <Link to={'/play/2'} style={{ textDecoration: 'none' }}>
                         <h4
                             className="mt-4 mb-4"
                             style={{ color: 'orange' }}
@@ -81,6 +82,7 @@ export function PlayScreen() {
                         >
                             Medium
                         </h4>
+                        </Link>
                         <h4
                             className="mt-4 mb-4"
                             style={{ color: 'darkred' }}
