@@ -1,15 +1,23 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import './Labyrinth.css'
-import { updateLabyrinth } from '../../services/LabyrinthService'
+import { addPlayer, updateLabyrinth } from '../../services/LabyrinthService'
 import { WinModal } from './WinModal'
+import { getClassName } from '../../util/Utils'
+import NameContext from '../../context/NameContext'
+import { usePlayer } from '../../hooks/usePlayer'
 
 interface LabyrinthProps {
     level: string[][]
 }
 
 export function LabyrinthComponent({ level }: LabyrinthProps) {
+    const {players} = usePlayer();
+    const {name} = useContext(NameContext);
     const [labyrinth, setLabyrinth] = useState<string[][]>(level);
-    const [endGame, setEndGame] = useState<Boolean>();
+    const [endGame, setEndGame] = useState<boolean>();
+    const [seconds, setSeconds] = useState(0);
+    const [minutes, setMinutes] = useState(0);
+    const [isRunning, setIsRunning] = useState(true);
     const [playerPosition, setPlayerPosition] = useState<[number, number]>(() => {
         // Zoek de startpositie van de speler
         for (let row = 0; row < level.length; row++) {
@@ -20,7 +28,7 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
             }
         }
         return [1, 1] // default player position
-    })
+    });
 
     const resetPlayerToStart = () => {
         const startRow = 1
@@ -43,6 +51,13 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
         // Update het JSON bestand
         updateLabyrinth(resetLabyrinth)
     }
+
+    const handleEndTimer = () => {
+        addPlayer(minutes.toString(), seconds.toString(), name, players!.length + 1);
+        setMinutes(0);
+        setSeconds(0);
+        setIsRunning(false);
+      };
 
     const movePlayer = (direction: string) => {
         const [currentRow, currentCol] = playerPosition
@@ -67,11 +82,12 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
         }
         if (newRow >= 0 && newRow < labyrinth.length && newCol >= 0 && newCol < labyrinth[newRow].length) {
             if (labyrinth[newRow][newCol] === 'W') {
-                resetPlayerToStart();
+                resetPlayerToStart()
             } else if (labyrinth[newRow][newCol] === 'P') {
             } else if (labyrinth[newRow][newCol] === 'X') {
                 setEndGame(true);
                 resetPlayerToStart();
+                handleEndTimer();
             } else {
                 // update labyrinth array
                 const updatedLabyrinth = labyrinth.map((row, rowIndex) =>
@@ -107,22 +123,23 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
         }
     }, [playerPosition, labyrinth])
 
-    const getClassName = (cell: string) => {
-        switch (cell) {
-            case 'W':
-                return 'wall'
-            case 'E':
-                return 'empty'
-            case 'P':
-                return 'portal'
-            case 'PL':
-                return 'player-location'
-            case 'X':
-                return 'exit'
-            default:
-                return ''
+    // change timer
+    useEffect(() => {
+        let timer: number
+        if (isRunning) {
+            timer = setInterval(() => {
+                setSeconds((prevSeconds) => {
+                    if (prevSeconds === 59) {
+                        setMinutes((prevMinutes) => prevMinutes + 1)
+                        return 0
+                    }
+                    return prevSeconds + 1
+                })
+            }, 1000)
         }
-    }
+        return () => clearInterval(timer)
+    }, [isRunning])
+
     return (
         <div
             className="conatiner text-center labyrinth"
@@ -137,14 +154,17 @@ export function LabyrinthComponent({ level }: LabyrinthProps) {
                 alignItems: 'center',
             }}
         >
-            <WinModal show={endGame}/>
+            <WinModal show={endGame} />
             <div
                 className="row justify-content-center"
                 style={{ display: 'flex', width: '1200px', marginBottom: '50px' }}
             >
-                <div className="col">Controls</div>
-                <div className="col">Player 1</div>
-                <div className="col">Timer</div>
+                <div className="col">{name}</div>
+                <div className="col">
+                    <span style={{ fontSize: '' }}>
+                        {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+                    </span>
+                </div>
             </div>
             {level.map((row, rowIndex) => (
                 <div className="row justify-content-center" style={{ maxWidth: '1000px' }} key={rowIndex}>

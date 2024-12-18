@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import flightGif from '../../assets/img/flight.gif'
 
 interface winModalProps{
-    show: boolean
+    show: boolean | undefined
 }
 export function WinModal({show} : winModalProps) {
     if(!show) return null; 
@@ -13,7 +13,7 @@ export function WinModal({show} : winModalProps) {
         id="exampleModal"
         style={{
             display: "block",
-            backgroundColor: "rgba(0, 0, 0, 0.8)", // Verduistering van achtergrond
+            backgroundColor: "rgba(0, 0, 0, 0.8)", 
             height: "100vh",
             overflow: "hidden",
             justifyContent: "center",

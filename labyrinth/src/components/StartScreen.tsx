@@ -19,7 +19,16 @@ export default function StartScreen(){
         >Play</h4>
         </Link>
 
-        <h4 className="mt-4 mb-4 p2">Settings</h4>
+        <Link to={'/leaderboard'} style={{textDecoration: 'none'}}>
+        <h4 className="mt-4 mb-4" style={{color: 'white'}}
+        onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        >Leaderboard</h4>
+        </Link>
 
 
         <Link to={'/not'} style={{textDecoration: 'none'}}>
