@@ -1,1 +1,1 @@
-# Making a Labyrinth game using -> React + TypeScript + Vite
+# A Labyrinth game build with -> React + TypeScript + Bootstrap
